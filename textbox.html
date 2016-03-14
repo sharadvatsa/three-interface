@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Three Interface</title>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <style>
+
+            body, 
+            html {
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+                height: 100%;
+            }
+            .ui {
+                width: 1000px;
+                background-color: rgba(0, 0, 0, .6);
+                color: white;
+                border: 5px solid white;
+                padding: 100px 50px;
+                box-sizing: border-box;
+                font-family: 'Roboto', sans-serif;
+                text-align: center;
+            }
+            .ui-title {
+                font-size: 40px;
+                line-height: 1.4;
+                margin: 0 0 50px;
+            }
+            .ui-text {
+                font-size: 30px;
+                line-height: 1.4;
+                margin: 0 0 50px;
+            }
+            .ui-input {
+                font-size: 30px;
+                display: inline-block;
+                width: 80%;
+                margin: 0 0 40px;
+                padding: 20px;
+                box-sizing: border-box;
+                background: none;
+                border: 5px solid rgba(255, 255, 255, .3);
+                color: white;
+            }
+            .ui-input.focus {
+                border-color: #16ce16;
+            }
+            .ui-input::placeholder {
+                color: rgba(0, 0, 0, .4);
+            }
+
+        </style>
+    </head>
+    <body>        
+        <script src="node_modules/three/three.min.js"></script>
+        <script src="node_modules/webvr-polyfill/build/webvr-polyfill.js"></script>
+        <script src="node_modules/three/examples/js/controls/VRControls.js"></script>
+        <script src="node_modules/three/examples/js/effects/VREffect.js"></script>
+        <script src="build/three-interface.js"></script>
+
+        <script>
+
+            // basic setup
+
+            var scene = new THREE.Scene();
+
+            var renderer = new THREE.WebGLRenderer({ antialias: false });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+            scene.add(camera);
+
+            var effect = new THREE.VREffect(renderer);
+            var controls = new THREE.VRControls(camera);
+            var cursor = new THREE.InterfaceCursor(scene, camera);
+
+            window.addEventListener('resize', onResize, false);
+
+            // add our THREE.Interface example
+
+            var html = [
+                '<div class="ui">',
+                    '<div class="ui-title">ThreeJS Interface</div>',
+                    '<div class="ui-text">Textbox in WebVR!?!?</div>',
+                    '<input class="ui-input" method="input" type="text" placeholder="Enter text" />',
+                '</div>'
+            ];
+
+            var methods = {
+                input: function () {
+                    if (focused) {
+                        getInput().className = 'ui-input';
+                        window.removeEventListener('keydown', onKeyDown, true);
+                        window.removeEventListener('keypress', onKeyPress, true);
+                        focused = false;
+                    } else {
+                        getInput().className = 'ui-input focus';
+                        window.addEventListener('keydown', onKeyDown, true);
+                        window.addEventListener('keypress', onKeyPress, true);
+                        focused = true;
+                    }
+                }
+            };
+
+            var options = {
+                observe: true,
+                alwaysOnTop: true,
+                // debug: true,
+                clearTexture: false
+            };
+
+            var ui = new THREE.Interface(html, methods, options);
+            ui.position.z = -2;
+            scene.add(ui);
+
+            function getInput () {
+                return ui.element.querySelectorAll('input')[0];
+            }
+
+            var focused = false;
+            var text = '';
+
+            function onKeyDown (e) {
+                if (e.keyCode === 8) {
+                    e.preventDefault();
+                    text = text.substr(0, text.length-1);
+                    getInput().setAttribute('value', text); 
+                }
+            }
+            
+            function onKeyPress (e) {
+                text += String.fromCharCode(e.keyCode);
+                getInput().setAttribute('value', text); 
+            }
+
+            // add lighting
+
+
+            var light1 = new THREE.AmbientLight(0x404040);
+            scene.add(light1);
+
+            var light2 = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+            scene.add(light2);
+
+            var light3 = new THREE.DirectionalLight( 0xffffff, 0.4 );
+            light3.position.set( 0, 1, 0 );
+            scene.add(light3);
+
+            // add skybox
+
+            var boxWidth = 5;
+            var loader = new THREE.TextureLoader();
+            loader.load('img/box.png', onTextureLoaded);
+
+            function onTextureLoaded(texture) {
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(boxWidth, boxWidth);
+                var geometry = new THREE.BoxGeometry(boxWidth, boxWidth, boxWidth);
+                var material = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    color: 0x01BE00,
+                    side: THREE.BackSide
+                });
+                var skybox = new THREE.Mesh(geometry, material);
+                scene.add(skybox);
+            }
+
+            function update () {
+                requestAnimationFrame(update);
+
+                controls.update();
+                // effect.render(scene, camera, timestamp);
+                renderer.render(scene, camera);                    
+            }
+
+            update(performance ? performance.now() : Date.now());
+
+            function onResize () {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+        </script>
+    </body>
+</html>
