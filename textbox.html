@@ -164,12 +164,12 @@
             var methods = {
                 input: function (elem) {
                     if (focused) {
-                        elem.className = 'ui-input';
+                        getInput().className = 'ui-input';
                         window.removeEventListener('keydown', onKeyDown, true);
                         window.removeEventListener('keypress', onKeyPress, true);
                         focused = false;
                     } else {
-                        elem.className = 'ui-input focus';
+                        getInput().className = 'ui-input focus';
                         window.addEventListener('keydown', onKeyDown, true);
                         window.addEventListener('keypress', onKeyPress, true);
                         focused = true;
