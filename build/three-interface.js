@@ -3747,8 +3747,10 @@ THREE.Interface.prototype.render = function (html) {
     document.body.appendChild(clone);
 
     this.image.src = '';
-    this.texture.image = null;
-    this.texture.needsUpdate = true;
+    if (this.options.clearTexture !== false) {
+        this.texture.image = null;
+        this.texture.needsUpdate = true;
+    }
 
     // wait for images to load
 
