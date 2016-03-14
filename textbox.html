@@ -52,8 +52,36 @@
             .ui-input.focus {
                 border-color: #16ce16;
             }
-            .ui-input::placeholder {
-                color: rgba(0, 0, 0, .4);
+            .ui-keyboard {
+
+            }
+            .ui-keyboard-row {
+
+            }
+            .ui-keyboard-row.one {
+
+            }
+            .ui-keyboard-row.two {
+                
+            }
+            .ui-keyboard-row.three {
+                
+            }
+            .ui-keyboard-row.four {
+                
+            }
+            .ui-keyboard-key {
+                font-size: 35px;
+                line-height: 70px;
+                width: 70px;
+                height: 70px;
+                border-radius: 5px;
+                border: 2px solid white;
+                display: inline-block;
+                margin: 0 5px 5px;
+            }
+            .ui-keyboard-key.space {
+                width: 600px;
             }
 
         </style>
@@ -92,22 +120,64 @@
                     '<div class="ui-title">ThreeJS Interface</div>',
                     '<div class="ui-text">Textbox in WebVR!?!?</div>',
                     '<input class="ui-input" method="input" type="text" placeholder="Enter text" />',
+                    '<div class="ui-keyboard">',
+                        '<div class="ui-keyboard-row.one">',
+                            '<div method="key" class="ui-keyboard-key">Q</div>',
+                            '<div method="key" class="ui-keyboard-key">W</div>',
+                            '<div method="key" class="ui-keyboard-key">E</div>',
+                            '<div method="key" class="ui-keyboard-key">R</div>',
+                            '<div method="key" class="ui-keyboard-key">T</div>',
+                            '<div method="key" class="ui-keyboard-key">Y</div>',
+                            '<div method="key" class="ui-keyboard-key">U</div>',
+                            '<div method="key" class="ui-keyboard-key">I</div>',
+                            '<div method="key" class="ui-keyboard-key">O</div>',
+                            '<div method="key" class="ui-keyboard-key">P</div>',
+                        '</div>',
+                        '<div class="ui-keyboard-row.two">',
+                            '<div method="key" class="ui-keyboard-key">A</div>',
+                            '<div method="key" class="ui-keyboard-key">S</div>',
+                            '<div method="key" class="ui-keyboard-key">D</div>',
+                            '<div method="key" class="ui-keyboard-key">F</div>',
+                            '<div method="key" class="ui-keyboard-key">G</div>',
+                            '<div method="key" class="ui-keyboard-key">H</div>',
+                            '<div method="key" class="ui-keyboard-key">J</div>',
+                            '<div method="key" class="ui-keyboard-key">K</div>',
+                            '<div method="key" class="ui-keyboard-key">K</div>',
+                            '<div method="key" class="ui-keyboard-key">L</div>',
+                        '</div>',
+                        '<div class="ui-keyboard-row.three">',
+                            '<div method="key" class="ui-keyboard-key">Z</div>',
+                            '<div method="key" class="ui-keyboard-key">X</div>',
+                            '<div method="key" class="ui-keyboard-key">C</div>',
+                            '<div method="key" class="ui-keyboard-key">V</div>',
+                            '<div method="key" class="ui-keyboard-key">B</div>',
+                            '<div method="key" class="ui-keyboard-key">N</div>',
+                            '<div method="key" class="ui-keyboard-key">M</div>',
+                        '</div>',
+                        '<div class="ui-keyboard-row.four">',
+                            '<div method="key" class="ui-keyboard-key space"> </div>',
+                        '</div>',
+                    '</div>',
                 '</div>'
             ];
 
             var methods = {
-                input: function () {
+                input: function (elem) {
                     if (focused) {
-                        getInput().className = 'ui-input';
+                        elem.className = 'ui-input';
                         window.removeEventListener('keydown', onKeyDown, true);
                         window.removeEventListener('keypress', onKeyPress, true);
                         focused = false;
                     } else {
-                        getInput().className = 'ui-input focus';
+                        elem.className = 'ui-input focus';
                         window.addEventListener('keydown', onKeyDown, true);
                         window.addEventListener('keypress', onKeyPress, true);
                         focused = true;
                     }
+                },
+                key: function (elem) {
+                    text += elem.innerHTML;
+                    getInput().setAttribute('value', text); 
                 }
             };
 
