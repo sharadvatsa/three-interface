@@ -3,6 +3,7 @@ var gulp        = require('gulp');
 var gulpif      = require('gulp-if');
 var connect     = require('gulp-connect');
 var uglify      = require('gulp-uglify');
+var ghPages = require('gulp-gh-pages');
 var browserify  = require('browserify');
 var source      = require('vinyl-source-stream');
 var buffer      = require('vinyl-buffer');
@@ -11,7 +12,14 @@ var runSequence = require('run-sequence');
 
 var conf = {
     buildPath: './build',
-    main: ['./src/index.js']
+    main: ['./src/index.js'],
+    libs: [
+        './node_modules/three/three.min.js',
+        './node_modules/webvr-polyfill/build/webvr-polyfill.js',
+        './node_modules/three/examples/js/controls/VRControls.js',
+        './node_modules/three/examples/js/effects/VREffect.js'
+    ],
+    libsPath: './libs'
 };
 
 var MINIFY = _.includes(process.argv, '--minify');
@@ -37,9 +45,9 @@ gulp.task('scripts', function () {
         .pipe(gulp.dest(conf.buildPath));
 });
 
-gulp.task('copy', function () {
-    return gulp.src(conf.copy)
-        .pipe(gulp.dest(conf.buildPath));
+gulp.task('libs', function () {
+    return gulp.src(conf.libs)
+        .pipe(gulp.dest(conf.libsPath));
 });
 
 gulp.task('connect', function () {
@@ -50,4 +58,9 @@ gulp.task('watch', function () {
     gulp.watch(['./src/**/*.js'], ['scripts']);
 });
 
-gulp.task('default', ['build', 'connect', 'watch']);
+gulp.task('deploy', function() {
+  return gulp.src('./**/*')
+    .pipe(ghPages());
+});
+
+gulp.task('default', ['build', 'libs', 'connect', 'watch']);
