@@ -1,6 +1,6 @@
 {
   "name": "three-interface",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Interactive ThreeJS interfaces using HTML and CSS",
   "main": "build/three-interface.js",
   "scripts": {
