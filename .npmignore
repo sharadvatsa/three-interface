@@ -1,0 +1,6 @@
+img/
+libs/
+node_modules/
+index.html
+textbox.html
+gulpfile.js
