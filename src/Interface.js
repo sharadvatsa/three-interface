@@ -180,7 +180,7 @@ THREE.Interface.prototype.performClick = function (point) {
             click.x >= btn.left && click.x <= btn.right) {
 
             var method = this.methods[btn.method];
-            if (method) this.methods[btn.method](click);
+            if (method) this.methods[btn.method](btn.elem);
         }
     }
 
@@ -284,7 +284,8 @@ THREE.Interface.prototype.getBounds = function (clone) {
             bottom: b.bottom,
             width: b.width,
             height: b.height,
-            method: btn.getAttribute('method')
+            method: btn.getAttribute('method'),
+            elem: btn
         });
     }
 }
