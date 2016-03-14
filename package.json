@@ -2,7 +2,7 @@
   "name": "three-interface",
   "version": "0.0.2",
   "description": "Interactive ThreeJS interfaces using HTML and CSS",
-  "main": "build/three-interface.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
