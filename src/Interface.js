@@ -294,8 +294,7 @@ THREE.Interface.prototype.performClick = function (point) {
         if (click.y >= btn.top && click.y <= btn.bottom &&
             click.x >= btn.left && click.x <= btn.right) {
 
-            var method = this.methods[btn.method];
-            if (method) this.methods[btn.method](btn.elem);
+            eval('this.methods.' + btn.onclick);
         }
     }
 
@@ -307,7 +306,7 @@ THREE.Interface.prototype.getBounds = function (clone) {
 
     this.bounds = [];
 
-    var elems = clone.querySelectorAll('[method]');
+    var elems = clone.querySelectorAll('[onclick]');
 
     for (var i=0; i < elems.length; i++) {
         var btn = elems[i];
@@ -320,7 +319,7 @@ THREE.Interface.prototype.getBounds = function (clone) {
             bottom: b.bottom,
             width: b.width,
             height: b.height,
-            method: btn.getAttribute('method'),
+            onclick: btn.getAttribute('onclick'),
             elem: btn
         });
     }

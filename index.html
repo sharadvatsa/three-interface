@@ -85,7 +85,7 @@
                 '<div class="ui">',
                     '<div class="ui-title">ThreeJS Interface</div>',
                     '<div class="ui-text">Fully interactive HTML and CSS that works with WebVR</div>',
-                    '<div class="ui-button" method="forward">Click Me</div>',
+                    '<div class="ui-button" onclick="show(2)">Click Me</div>',
                 '</div>'
             ];
 
@@ -94,15 +94,12 @@
                     '<div class="ui-title">ThreeJS Interface</div>' +
                     '<div class="ui-text">Add multiple buttons, watch for changes, automatic rendering</div>' +
                     '<img class="ui-img" src="img/cool-cat.jpg"/>' +
-                    '<div class="ui-button" method="back">Go Back</div>' +
+                    '<div class="ui-button" onclick="show(1)">Go Back</div>' +
                 '</div>';
 
             var methods = {
-                forward: function () {
-                    this.render(htmlTwo);
-                },
-                back: function () {
-                    this.render(htmlOne);
+                show: function (num) {
+                    this.render(num === 1 ? htmlOne : htmlTwo);
                 }
             };
 
