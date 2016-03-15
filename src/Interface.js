@@ -295,10 +295,6 @@ THREE.Interface.prototype.performClick = function (point) {
             click.x >= btn.left && click.x <= btn.right) {
 
             eval('this.methods.' + btn.onclick);
-
-            // var method = this.methods[btn.onclick];
-            // var value = btn.value;
-            // if (method) this.methods(value);
         }
     }
 
