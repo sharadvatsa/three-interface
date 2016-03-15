@@ -19,10 +19,10 @@ as it works with stereoscopic rendering.
         }
     };
     var options = {
+        throttle: 250          // throttle for the renderer in milliseconds, can be disabled with false (default 250ms)
         observe: true,         // watches the element for changes and re-renders (default true)
         alwaysOnTop: false,    // ensures the UI is always on top of everything in the scene (default false) 
-        debug: false,          // places a small sphere at the click point (default false)
-        clearTexture: true     // useful if you change the root element size to prevent intermittent stretching (default true)
+        debug: false           // places a small sphere at the click point (default false)
     };
     var ui = new THREE.Interface(html, methods, options);
     scene.add(ui);

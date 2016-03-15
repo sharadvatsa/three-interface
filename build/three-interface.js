@@ -3548,10 +3548,435 @@ module.exports = XHR;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],2:[function(require,module,exports){
 /**
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var debounce = require('lodash.debounce');
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/**
+ * Creates a throttled function that only invokes `func` at most once per
+ * every `wait` milliseconds. The throttled function comes with a `cancel`
+ * method to cancel delayed `func` invocations and a `flush` method to
+ * immediately invoke them. Provide an options object to indicate whether
+ * `func` should be invoked on the leading and/or trailing edge of the `wait`
+ * timeout. The `func` is invoked with the last arguments provided to the
+ * throttled function. Subsequent calls to the throttled function return the
+ * result of the last `func` invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+ * on the trailing edge of the timeout only if the throttled function is
+ * invoked more than once during the `wait` timeout.
+ *
+ * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+ * for details over the differences between `_.throttle` and `_.debounce`.
+ *
+ * @static
+ * @memberOf _
+ * @category Function
+ * @param {Function} func The function to throttle.
+ * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
+ * @param {Object} [options] The options object.
+ * @param {boolean} [options.leading=true] Specify invoking on the leading
+ *  edge of the timeout.
+ * @param {boolean} [options.trailing=true] Specify invoking on the trailing
+ *  edge of the timeout.
+ * @returns {Function} Returns the new throttled function.
+ * @example
+ *
+ * // Avoid excessively updating the position while scrolling.
+ * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
+ *
+ * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
+ * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
+ * jQuery(element).on('click', throttled);
+ *
+ * // Cancel the trailing throttled invocation.
+ * jQuery(window).on('popstate', throttled.cancel);
+ */
+function throttle(func, wait, options) {
+  var leading = true,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  if (isObject(options)) {
+    leading = 'leading' in options ? !!options.leading : leading;
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+  return debounce(func, wait, {
+    'leading': leading,
+    'maxWait': wait,
+    'trailing': trailing
+  });
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+module.exports = throttle;
+
+},{"lodash.debounce":3}],3:[function(require,module,exports){
+/**
+ * lodash 4.0.3 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/** Used as references for various `Number` constants. */
+var NAN = 0 / 0;
+
+/** `Object#toString` result references. */
+var funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]';
+
+/** Used to match leading and trailing whitespace. */
+var reTrim = /^\s+|\s+$/g;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
+
+/**
+ * Gets the timestamp of the number of milliseconds that have elapsed since
+ * the Unix epoch (1 January 1970 00:00:00 UTC).
+ *
+ * @static
+ * @memberOf _
+ * @type {Function}
+ * @category Date
+ * @returns {number} Returns the timestamp.
+ * @example
+ *
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => logs the number of milliseconds it took for the deferred function to be invoked
+ */
+var now = Date.now;
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked. The debounced function comes with a `cancel` method to cancel
+ * delayed `func` invocations and a `flush` method to immediately invoke them.
+ * Provide an options object to indicate whether `func` should be invoked on
+ * the leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+ * with the last arguments provided to the debounced function. Subsequent calls
+ * to the debounced function return the result of the last `func` invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+ * on the trailing edge of the timeout only if the debounced function is
+ * invoked more than once during the `wait` timeout.
+ *
+ * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+ * for details over the differences between `_.debounce` and `_.throttle`.
+ *
+ * @static
+ * @memberOf _
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0] The number of milliseconds to delay.
+ * @param {Object} [options] The options object.
+ * @param {boolean} [options.leading=false] Specify invoking on the leading
+ *  edge of the timeout.
+ * @param {number} [options.maxWait] The maximum time `func` is allowed to be
+ *  delayed before it's invoked.
+ * @param {boolean} [options.trailing=true] Specify invoking on the trailing
+ *  edge of the timeout.
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // Avoid costly calculations while the window size is in flux.
+ * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ *
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+ * jQuery(element).on('click', _.debounce(sendMail, 300, {
+ *   'leading': true,
+ *   'trailing': false
+ * }));
+ *
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+ * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+ * var source = new EventSource('/stream');
+ * jQuery(source).on('message', debounced);
+ *
+ * // Cancel the trailing debounced invocation.
+ * jQuery(window).on('popstate', debounced.cancel);
+ */
+function debounce(func, wait, options) {
+  var args,
+      maxTimeoutId,
+      result,
+      stamp,
+      thisArg,
+      timeoutId,
+      trailingCall,
+      lastCalled = 0,
+      leading = false,
+      maxWait = false,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  wait = toNumber(wait) || 0;
+  if (isObject(options)) {
+    leading = !!options.leading;
+    maxWait = 'maxWait' in options && nativeMax(toNumber(options.maxWait) || 0, wait);
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+
+  function cancel() {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    if (maxTimeoutId) {
+      clearTimeout(maxTimeoutId);
+    }
+    lastCalled = 0;
+    args = maxTimeoutId = thisArg = timeoutId = trailingCall = undefined;
+  }
+
+  function complete(isCalled, id) {
+    if (id) {
+      clearTimeout(id);
+    }
+    maxTimeoutId = timeoutId = trailingCall = undefined;
+    if (isCalled) {
+      lastCalled = now();
+      result = func.apply(thisArg, args);
+      if (!timeoutId && !maxTimeoutId) {
+        args = thisArg = undefined;
+      }
+    }
+  }
+
+  function delayed() {
+    var remaining = wait - (now() - stamp);
+    if (remaining <= 0 || remaining > wait) {
+      complete(trailingCall, maxTimeoutId);
+    } else {
+      timeoutId = setTimeout(delayed, remaining);
+    }
+  }
+
+  function flush() {
+    if ((timeoutId && trailingCall) || (maxTimeoutId && trailing)) {
+      result = func.apply(thisArg, args);
+    }
+    cancel();
+    return result;
+  }
+
+  function maxDelayed() {
+    complete(trailing, timeoutId);
+  }
+
+  function debounced() {
+    args = arguments;
+    stamp = now();
+    thisArg = this;
+    trailingCall = trailing && (timeoutId || !leading);
+
+    if (maxWait === false) {
+      var leadingCall = leading && !timeoutId;
+    } else {
+      if (!lastCalled && !maxTimeoutId && !leading) {
+        lastCalled = stamp;
+      }
+      var remaining = maxWait - (stamp - lastCalled);
+
+      var isCalled = (remaining <= 0 || remaining > maxWait) &&
+        (leading || maxTimeoutId);
+
+      if (isCalled) {
+        if (maxTimeoutId) {
+          maxTimeoutId = clearTimeout(maxTimeoutId);
+        }
+        lastCalled = stamp;
+        result = func.apply(thisArg, args);
+      }
+      else if (!maxTimeoutId) {
+        maxTimeoutId = setTimeout(maxDelayed, remaining);
+      }
+    }
+    if (isCalled && timeoutId) {
+      timeoutId = clearTimeout(timeoutId);
+    }
+    else if (!timeoutId && wait !== maxWait) {
+      timeoutId = setTimeout(delayed, wait);
+    }
+    if (leadingCall) {
+      isCalled = true;
+      result = func.apply(thisArg, args);
+    }
+    if (isCalled && !timeoutId && !maxTimeoutId) {
+      args = thisArg = undefined;
+    }
+    return result;
+  }
+  debounced.cancel = cancel;
+  debounced.flush = flush;
+  return debounced;
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8 which returns 'object' for typed array constructors, and
+  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3);
+ * // => 3
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3');
+ * // => 3
+ */
+function toNumber(value) {
+  if (isObject(value)) {
+    var other = isFunction(value.valueOf) ? value.valueOf() : value;
+    value = isObject(other) ? (other + '') : other;
+  }
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value;
+  }
+  value = value.replace(reTrim, '');
+  var isBinary = reIsBinary.test(value);
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value);
+}
+
+module.exports = debounce;
+
+},{}],4:[function(require,module,exports){
+/**
  * @author ashconnell / http://ashconnell.com/
  */
 
 var html2canvas = require('html2canvas');
+var throttle = require('lodash.throttle');
 
 THREE.Interface = function (html, methods, options) {
 
@@ -3561,6 +3986,14 @@ THREE.Interface = function (html, methods, options) {
     this.methods = methods || {};
     this.options = options || {};
     this.scaler = 0.0025;
+    this.queue = [];
+
+    // set throttling
+
+    if (this.options.throttle !== false) {
+        this.options.throttle = this.options.throttle || 250;
+        this.render = throttle(this.render, this.options.throttle);
+    }
 
     // bind method contexts to this instance
 
@@ -3570,19 +4003,12 @@ THREE.Interface = function (html, methods, options) {
         }
     }
 
-    // initialise our texture and canvas image loading logic
+    // create singleton image we will update with canvas renders
 
-    this.texture = new THREE.Texture();
     this.image = new Image();
+    this.image.onload = this.onImageReady.bind(this);
 
-    this.image.onload = function () {
-
-        this.texture.image = this.image;
-        this.texture.needsUpdate = true;
-
-    }.bind(this);
-
-    // render the html onto the plane
+    // render the interface plane
 
     this.render(html);
 }
@@ -3590,28 +4016,137 @@ THREE.Interface = function (html, methods, options) {
 THREE.Interface.prototype = Object.create( THREE.Object3D.prototype );
 THREE.Interface.prototype.constructor = THREE.Interface;
 
-THREE.Interface.prototype.build = function (html) {
+THREE.Interface.prototype.render = function (html) {
 
-    // decipher and turn html in a node
+    // convert html to element
 
-    this.element = this.makeElement(html);
-
-    // remove existing observer (if any)
-
-    if (this.observer) {
-        this.observer.disconnect();
+    if (html) {
+        this.element = this.makeElement(html);
     }
 
-    // set up observer if option is set
+    // clone the elment and add to dom
 
-    if (this.options.observe === true) {
+    var clone = this.element.cloneNode(true);
 
-        var config = { attributes: true, childList: true, characterData: true, subtree: true };
-        this.observer = new MutationObserver(this.onChange.bind(this));
-        this.observer.observe(this.element, config);
+    this.queue.push(clone);
+
+    if (!this.isRendering) {
+        this.renderNext();
+    }
+
+}
+
+THREE.Interface.prototype.renderImmediate = function (html) {
+
+}
+
+THREE.Interface.prototype.renderNext = function () {
+
+    this.isRendering = true;
+
+    var clone = this.queue.shift();
+
+    document.body.appendChild(clone);
+
+    // load any <img> tags in the dom element
+
+    this.loadImages(clone, function () {
+
+        // check size changes
+
+        this.sizeChanged = (this.lastHeight !== clone.clientHeight || this.lastWidth !== clone.clientWidth);
+        this.lastHeight = clone.clientHeight;
+        this.lastWidth = clone.clientWidth;
+
+        // render!
+
+        html2canvas(clone).then(function (canvas) {
+
+            // update image src, will fire loaded event when ready
+
+            this.image.src = canvas.toDataURL();
+
+            // calculate button positions
+
+            this.getBounds(clone);
+
+            // dispose of cloned element
+
+            document.body.removeChild(clone);
+            clone = null;
+
+        }.bind(this));
+
+    }.bind(this));
+
+}
+
+THREE.Interface.prototype.onImageReady = function () {
+
+    // create or recreate plane if size changed
+
+    if (this.sizeChanged) {
+        this.makePlane();
+    }
+
+    // dispose of any previous texture
+
+    if (this.plane.material.map) {
+        this.plane.material.map.dispose();
+    }
+
+    // update plane texture
+
+    this.plane.material.map = new THREE.Texture(this.image);
+    this.plane.material.map.needsUpdate = true;
+
+    if (this.queue.length) {
+        this.renderNext();
+    } else {
+        this.isRendering = false;
+    }
+
+}
+
+THREE.Interface.prototype.makePlane = function () {
+
+    // remove and dispose of current plane (if any)
+
+    if (this.plane) {
+
+        this.remove(this.plane);
+        this.plane.geometry.dispose();
+        this.plane.material.dispose();
 
     }
 
+    // transpose element to plane size using scaler
+
+    var width = this.scaler * this.lastWidth;
+    var height = this.scaler * this.lastHeight;
+
+    // create plane
+
+    // var texture = new THREE.Texture(this.image);
+    var geometry = new THREE.PlaneGeometry(width, height);
+    var material = new THREE.MeshLambertMaterial({
+
+        // texture will be updated with canvas render
+
+        // map: texture,
+
+        // enable css opacity, rgba etc
+
+        transparent: true,
+
+        // makes the interface always on top
+
+        depthTest: !this.options.alwaysOnTop
+
+    });
+
+    this.plane = new THREE.Mesh(geometry, material);
+    this.add(this.plane);
 }
 
 THREE.Interface.prototype.makeElement = function (html) {
@@ -3652,133 +4187,29 @@ THREE.Interface.prototype.makeElement = function (html) {
         console.error('html must be String, Array or HTMLElement');
     }
 
+    // remove existing observer (if any)
+
+    if (this.observer) {
+        this.observer.disconnect();
+    }
+
+    // set up observer if option is set
+
+    if (this.options.observe === true) {
+
+        var config = { attributes: true, childList: true, characterData: true, subtree: true };
+        this.observer = new MutationObserver(this.onElementChange.bind(this));
+        this.observer.observe(elem, config);
+
+    }
+
     return elem;
+
 }
 
-THREE.Interface.prototype.onChange = function () {
-
-    // fired when observe notices change - render again
+THREE.Interface.prototype.onElementChange = function () {
 
     this.render();
-
-}
-
-THREE.Interface.prototype.updatePlane = function (clone) {
-
-    // transpose element to plane size using scaler
-
-    var width = this.scaler * clone.clientWidth;
-    var height = this.scaler * clone.clientHeight;
-
-    // remove any existing plane
-
-    if (this.plane) this.remove(this.plane);
-
-    // create plane
-
-    var geometry = new THREE.PlaneGeometry(width, height);
-    var material = new THREE.MeshLambertMaterial({
-
-        // texture will be updated with canvas render
-
-        map: this.texture,
-
-        // enable css opacity, rgba etc
-
-        transparent: true,
-
-        // makes the interface always on top
-
-        depthTest: !this.options.alwaysOnTop
-
-    });
-
-    this.plane = new THREE.Mesh(geometry, material);
-    this.add(this.plane);
-}
-
-THREE.Interface.prototype.performClick = function (point) {
-
-    // convert ray point from world to local
-
-    this.plane.worldToLocal(point);
-
-    // debug shows click point
-
-    if (this.options.debug) {
-        var geometry = new THREE.SphereGeometry(0.05);
-        var material = new THREE.MeshLambertMaterial({ color: 'green' });
-        var box = new THREE.Mesh(geometry, material);
-        box.position.copy(point);
-        this.plane.add(box);
-    }
-
-    // convert point into pixel coords
-
-    var click = {
-        x: (point.x + this.data.plane.halfWidth) / this.scaler,
-        y: -(point.y - this.data.plane.halfHeight) / this.scaler
-    };
-
-    // fire any hits (if any)
-
-    for (var i=0; i < this.data.buttons.length; i++) {
-        var btn = this.data.buttons[i];
-
-        if (click.y >= btn.top && click.y <= btn.bottom &&
-            click.x >= btn.left && click.x <= btn.right) {
-
-            var method = this.methods[btn.method];
-            if (method) this.methods[btn.method](btn.elem);
-        }
-    }
-
-}
-
-THREE.Interface.prototype.render = function (html) {
-
-    // build the passed in html and set up observers
-
-    if (html) this.build(html);
-
-    // clone the elment and add to dom
-
-    var clone = this.element.cloneNode(true);
-    document.body.appendChild(clone);
-
-    this.image.src = '';
-    if (this.options.clearTexture !== false) {
-        this.texture.image = null;
-        this.texture.needsUpdate = true;
-    }
-
-    // wait for images to load
-
-    this.loadImages(clone, function () {
-
-        // build or rebuild the plane with the correct size
-
-        this.updatePlane(clone);
-
-        // calculate button positions
-
-        this.getBounds(clone);
-
-        // render it
-
-        html2canvas(clone).then(function (canvas) {
-
-            // set the image src which will update the texture when it loads
-
-            this.image.src = canvas.toDataURL();
-
-            // remove from dom (performance?)
-
-            document.body.removeChild(clone);
-
-        }.bind(this));
-
-    }.bind(this));
 
 }
 
@@ -3803,30 +4234,59 @@ THREE.Interface.prototype.loadImages = function (clone, done) {
         });
     }
 
+}
+
+THREE.Interface.prototype.performClick = function (point) {
+
+    // convert ray point from world to local
+
+    this.plane.worldToLocal(point);
+
+    // debug shows click point
+
+    if (this.options.debug) {
+        var geometry = new THREE.SphereGeometry(0.05);
+        var material = new THREE.MeshLambertMaterial({ color: 'green' });
+        var box = new THREE.Mesh(geometry, material);
+        box.position.copy(point);
+        this.plane.add(box);
+    }
+
+    // convert point into pixel coords
+
+    var click = {
+        x: (point.x + (this.plane.geometry.parameters.width / 2)) / this.scaler,
+        y: -(point.y - (this.plane.geometry.parameters.height / 2)) / this.scaler
+    };
+
+    // fire any hits (if any)
+
+    for (var i=0; i < this.bounds.length; i++) {
+        var btn = this.bounds[i];
+
+        if (click.y >= btn.top && click.y <= btn.bottom &&
+            click.x >= btn.left && click.x <= btn.right) {
+
+            var method = this.methods[btn.method];
+            if (method) this.methods[btn.method](btn.elem);
+        }
+    }
 
 }
 
 THREE.Interface.prototype.getBounds = function (clone) {
-    this.data = {};
-
-    // calculate plane bounds etc
-
-    this.data.plane = {
-        halfWidth: this.plane.geometry.parameters.width / 2,
-        halfHeight: this.plane.geometry.parameters.height / 2
-    };
 
     // get button bounds
 
-    var elems = clone.querySelectorAll('[method]');
+    this.bounds = [];
 
-    this.data.buttons = [];
+    var elems = clone.querySelectorAll('[method]');
 
     for (var i=0; i < elems.length; i++) {
         var btn = elems[i];
         var b = btn.getBoundingClientRect();
 
-        this.data.buttons.push({
+        this.bounds.push({
             top: b.top,
             left: b.left,
             right: b.right,
@@ -3839,7 +4299,7 @@ THREE.Interface.prototype.getBounds = function (clone) {
     }
 }
 
-},{"html2canvas":1}],3:[function(require,module,exports){
+},{"html2canvas":1,"lodash.throttle":2}],5:[function(require,module,exports){
 /**
  * @author ashconnell / http://ashconnell.com/
  */
@@ -3916,7 +4376,7 @@ THREE.InterfaceCursor.prototype.performClick = function () {
     }
 }
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /**
  * @author ashconnell / http://ashconnell.com/
  */
@@ -3924,4 +4384,4 @@ THREE.InterfaceCursor.prototype.performClick = function () {
 require('./Interface');
 require('./InterfaceCursor');
 
-},{"./Interface":2,"./InterfaceCursor":3}]},{},[4]);
+},{"./Interface":4,"./InterfaceCursor":5}]},{},[6]);
