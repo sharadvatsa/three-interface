@@ -28,6 +28,16 @@ as it works with stereoscopic rendering.
     scene.add(ui);
 ```
 
+### Wanna give it a try 
+```
+1. Clone the code 
+2. npm install
+3. npm install gulp -g
+4. gulp 'OR' gulp connect 
+```
+
+
+
 ### Arguments
 
 | Param | Type | Details |
