@@ -3,7 +3,7 @@ var gulp        = require('gulp');
 var gulpif      = require('gulp-if');
 var connect     = require('gulp-connect');
 var uglify      = require('gulp-uglify');
-var ghPages = require('gulp-gh-pages');
+var ghPages     = require('gulp-gh-pages');
 var browserify  = require('browserify');
 var source      = require('vinyl-source-stream');
 var buffer      = require('vinyl-buffer');
@@ -63,4 +63,11 @@ gulp.task('deploy', function() {
     .pipe(ghPages());
 });
 
-gulp.task('default', ['build', 'libs', 'connect', 'watch']);
+gulp.task('serve', function() {serve({
+    port: 8080
+})});
+
+gulp.task('default', function(done) { 
+    gulp.series('clean','build', 'libs', 'connect', 'watch')
+    done(); 
+});
